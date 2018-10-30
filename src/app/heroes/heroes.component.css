@@ -28,6 +28,16 @@
     background-color: #DDD;
     left: .1em;
   }
+  .heroes a {
+    color: #888;
+    text-decoration: none;
+    position: relative;
+    display: block;
+  }
+   
+  .heroes a:hover {
+    color:#607D8B;
+  }
   .heroes .text {
     position: relative;
     top: -3px;
