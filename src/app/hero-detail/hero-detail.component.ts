@@ -4,6 +4,8 @@ import { Location } from '@angular/common';
 
 import { HeroService }  from '../hero.service';
 import { Hero } from '../hero';
+import { Observable } from 'rxjs';
+import { httpClientInMemBackendServiceFactory } from 'angular-in-memory-web-api';
 
 @Component({
   selector: 'app-hero-detail',
@@ -28,6 +30,12 @@ export class HeroDetailComponent implements OnInit {
   getHero(){
     const id = +this.route.snapshot.paramMap.get('id');
     this.heroService.getHero(id).subscribe(hero => this.hero = hero);
+  }
+
+  save(){
+    this.heroService.save(this.hero).subscribe(
+      () => this.goBack()
+    );
   }
   
   goBack(){
