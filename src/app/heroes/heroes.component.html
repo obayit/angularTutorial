@@ -2,15 +2,15 @@
 
 <div>
   <label>Name:
-    <input #hName/>
+    <input #heroName/>
   </label>
   <label>Hero Name:
-    <input #hHeroName/>
+    <input #heroHeroName/>
   </label>
   <label>Image URL:
-    <input #hImage/>
+    <input #heroImage/>
   </label>
-  <button (click)="add(hName, hHeroName, hImage); hName = hHeroName = '';">Save</button>
+  <button (click)="add(heroName.value, heroHeroName.value, heroImage.value); heroName.value = heroHeroName.value = heroImage.value = ''">Save</button>
 </div>
 
 <ul class="heroes">
@@ -19,5 +19,6 @@
     <a routerLink="/detail/{{hero.id}}">
       <span class="badge">{{hero.id}}</span> {{hero.heroName}} ({{hero.name}})
     </a>
+    <button class="delete" title="Delete Hero" (click)="delete(hero)">x</button>
   </li>
 </ul>

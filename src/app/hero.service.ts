@@ -7,6 +7,10 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Hero } from './hero';
 import { MessageService } from './message.service';
 
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Typ': 'application/json' })
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -53,10 +57,6 @@ export class HeroService {
   }
 
   save(hero: Hero): Observable<any>{
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Typ': 'application/json' })
-    };
-
     return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
       tap(_ => this.log(`update hero id = ${hero.id}`)),
       catchError(this.handleError<any>('updateHero'))
@@ -64,13 +64,17 @@ export class HeroService {
   }
 
   add(hero: Hero): Observable<any>{
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Typ': 'application/json' })
-    };
+    return this.http.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
+      tap(hero => this.log(`Added hero w/ id = ${hero.id}`)),
+      catchError(this.handleError<Hero>('addHero'))
+    );
+  }
 
-    return this.http.post(this.heroesUrl, hero, httpOptions).pipe(
-      tap(_ => this.log(`Added hero w/ id = ${hero.id}`)),
-      catchError(this.handleError<Hero>('updateHero'))
+  delete(hero: Hero | number): Observable<any>{
+    const id = typeof hero === 'number' ? hero : hero.id;
+    return this.http.delete<Hero>(`${this.heroesUrl}/${id}`, httpOptions).pipe(
+      tap(_ => this.log(`deleted hero id = ${id}`)),
+      catchError(this.handleError<any>('deleteHero'))
     );
   }
 
