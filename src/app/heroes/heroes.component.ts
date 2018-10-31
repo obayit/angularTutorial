@@ -26,8 +26,7 @@ export class HeroesComponent implements OnInit {
     heroName = heroName.trim();
     if(!heroName) { return; }
     this.heroService.add({name, heroName, image} as Hero).subscribe(
-       hero => 
-       this.heroes.push(hero)
+       hero => hero ? this.heroes.push(hero) : 1===1
     );
   }
 
