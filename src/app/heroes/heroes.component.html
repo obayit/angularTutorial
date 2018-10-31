@@ -1,4 +1,18 @@
 <h2>My Heroes (Classes)</h2>
+
+<div>
+  <label>Name:
+    <input #hName/>
+  </label>
+  <label>Hero Name:
+    <input #hHeroName/>
+  </label>
+  <label>Image URL:
+    <input #hImage/>
+  </label>
+  <button (click)="add(hName, hHeroName, hImage); hName = hHeroName = '';">Save</button>
+</div>
+
 <ul class="heroes">
   <li *ngFor="let hero of heroes" (click)="onSelect(hero)"
     [class.selected]="hero === selectedHero">

@@ -63,6 +63,17 @@ export class HeroService {
     );
   }
 
+  add(hero: Hero): Observable<any>{
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Typ': 'application/json' })
+    };
+
+    return this.http.post(this.heroesUrl, hero, httpOptions).pipe(
+      tap(_ => this.log(`Added hero w/ id = ${hero.id}`)),
+      catchError(this.handleError<Hero>('updateHero'))
+    );
+  }
+
   /** Log a HeroService message with the MessageService */
   private log(message: string) {
     this.messageService.add(`HeroService: ${message}`);
