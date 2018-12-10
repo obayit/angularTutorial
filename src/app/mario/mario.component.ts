@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
+
+import { MessageService } from '../message.service'
+import { createText } from '@angular/core/src/view/text';
 
 @Component({
   selector: 'app-mario',
@@ -6,17 +9,88 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./mario.component.css']
 })
 export class MarioComponent implements OnInit {
+  pos = 0;
+  unt = 25;
+  step = 20;
 
-  constructor() { }
+  constructor(
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(){
-    this.drawStuff();
+    this.drawStuff(this.unt*8);
+  }
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent){
+    this.messageService.add(event.key);
+    if(event.key ==='ArrowRight'){
+      this.pos+=this.step;
+      this.drawStuff(this.unt*8 + this.pos);
+    }else if(event.key ==='ArrowLeft'){
+      this.pos-=this.step;
+      this.drawStuff(this.unt*8 + this.pos);
+    }
+  }
+  degToRad(degrees) {
+    return degrees * Math.PI / 180;
+  };
+  rand(min, max) {
+    return Math.floor(Math.random() * (max-min+1)) + (min);
+  }
+  drawLoop(ctx: CanvasRenderingContext2D, width: number, height: number){
+    ctx.translate(width/2, height/2);
+    let length = 250;
+    let moveOffset = 20;
+
+    for(var i = 0; i < length; i++) {
+      ctx.fillStyle = 'rgba(' + (255-length) + ', 0, ' + (255-length) + ', 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(moveOffset, moveOffset);
+      ctx.lineTo(moveOffset+length, moveOffset);
+      var triHeight = length/2 * Math.tan(this.degToRad(60));
+      ctx.lineTo(moveOffset+(length/2), moveOffset+triHeight);
+      ctx.lineTo(moveOffset, moveOffset);
+      ctx.fill();
+
+      length--;
+      moveOffset += 0.7;
+      ctx.rotate(this.degToRad(5));
+    }
+  }
+
+  drawTriangleCircle(ctx: CanvasRenderingContext2D){
+    ctx.fillStyle = '#F00';
+    ctx.beginPath();
+    ctx.moveTo(50, 50);
+    ctx.lineTo(150, 50);
+    let triHeight = 50 * Math.tan(this.degToRad(60));
+    ctx.lineTo(150, 50+triHeight);
+    ctx.lineTo(50, 50);
+    ctx.fill();
+    //circle
+    ctx.beginPath();
+    ctx.arc(100, 200, 50, this.degToRad(0), this.degToRad(360), false);
+    ctx.fill();
+    //another arc
+    ctx.fillStyle = 'yellow';
+    ctx.beginPath();
+    ctx.arc(100, 350, 50, this.degToRad(-45), this.degToRad(45), true);
+    ctx.lineTo(100, 350);
+    ctx.fill();
+  }
+  
+  async drawFirefoxImage(ctx: CanvasRenderingContext2D, x: number, y: number){
+    let image = new Image();
+    image.src = 'assets/firefox.png';
+    image.onload = function(){
+      ctx.drawImage(image, 20, 20, 185, 175, x, y, 185, 175);
+    }
   }
   sleep(ms) {return new Promise(resolve => setTimeout(resolve, ms));}
-  async drawStuff(){
+  async drawStuff(baseX: number){
     var canvas = document.querySelector('.myCanvas') as HTMLCanvasElement; 
-    var width = canvas.width = window.innerWidth;
-    var height = canvas.height = window.innerHeight;
+    var width = canvas.width = window.innerWidth - 128;
+    var height = canvas.height = window.innerHeight - 128 - 256;
     var ctx = canvas.getContext('2d');
     //background
     ctx.fillStyle = '#999';
@@ -25,8 +99,11 @@ export class MarioComponent implements OnInit {
     //mario
     ctx.fillStyle = '#ED1B24';
     var unt = 25;
-    var baseX = unt*8;
     var lineOffset = 1;
+    var cRed = '#ED1B24';
+    var cBlue = '#0000FE';
+    var cBody = '#FFC20F';
+    var cBrown = '#643201';
     //hat
     ctx.fillRect(baseX + unt*2, unt*2, unt*5, unt);
     ctx.fillRect(baseX + unt, unt*3, unt*9, unt);
@@ -201,6 +278,123 @@ export class MarioComponent implements OnInit {
     ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
     lineOffset += uwidth;
 
+    var line = 12;
+    lineOffset = -1;
+    //neck
+    uwidth = 2;
+    ctx.fillStyle = '#FFC20F';
+    ctx.fillRect(baseX -unt, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //shirt
+    uwidth = 1;
+    ctx.fillStyle = '#ED1B24';
+    ctx.fillRect(baseX+ unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //roll
+    uwidth = 1;
+    ctx.fillStyle = '#0000FE';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //pin
+    uwidth = 1;
+    ctx.fillStyle = '#FFC20F';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //roll
+    uwidth = 2;
+    ctx.fillStyle = '#0000FE';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //pin
+    uwidth = 1;
+    ctx.fillStyle = '#FFC20F';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //roll
+    uwidth = 1;
+    ctx.fillStyle = '#0000FE';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //shirt
+    uwidth = 1;
+    ctx.fillStyle = '#ED1B24';
+    ctx.fillRect(baseX+ unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    //hand
+    uwidth = 1;
+    lineOffset = this.drawLineItem(ctx, cBody, 2, baseX, lineOffset, line);
+
+    var line = 13;
+    lineOffset = -1;
+    //hand
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBody, uwidth, baseX, lineOffset, line);
+    //roll
+    uwidth = 6;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBlue, uwidth, baseX, lineOffset, line);
+    //hand
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBody, uwidth, baseX, lineOffset, line);
+
+    var line = 14;
+    lineOffset = -1;
+    //hand
+    uwidth = 2;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBody, uwidth, baseX, lineOffset, line);
+    //roll
+    uwidth = 8;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBlue, uwidth, baseX, lineOffset, line);
+    //hand
+    uwidth = 2;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBody, uwidth, baseX, lineOffset, line);
+
+    var line = 15;
+    lineOffset = 1;
+    //roll
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBlue, uwidth, baseX, lineOffset, line);
+    lineOffset += 2;
+    //roll
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBlue, uwidth, baseX, lineOffset, line);
+
+    var line = 16;
+    lineOffset = 0;
+    //shoe
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBrown, uwidth, baseX, lineOffset, line);
+    lineOffset += 4;
+    //shoe
+    uwidth = 3;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBrown, uwidth, baseX, lineOffset, line);
+
+    var line = 17;
+    lineOffset = -1;
+    //shoe
+    uwidth = 4;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBrown, uwidth, baseX, lineOffset, line);
+    lineOffset += 4;
+    //shoe
+    uwidth = 4;
+    lineOffset = lineOffset = this.drawLineItem(ctx, cBrown, uwidth, baseX, lineOffset, line);
+    /*
+    //shirt
+    uwidth = 4;
+    ctx.fillStyle = '#ED1B24';
+    ctx.fillRect(baseX + unt*lineOffset, unt*line, unt*uwidth, unt);
+    lineOffset += uwidth;
+    */
+    this.drawFirefoxImage(ctx, baseX + unt*15, unt);
+    this.drawTriangleCircle(ctx);
+    this.drawLoop(ctx, width, height);
+
+    }
+    drawLineItem(ctx: CanvasRenderingContext2D, color: string, uwidth: number, baseX: number, lineOffset: number, line: number): number{
+      var unt = 25;
+      ctx.fillStyle = color;
+      ctx.fillRect(baseX+ unt*lineOffset, unt*line, unt*uwidth, unt);
+      lineOffset += uwidth;
+      return lineOffset;
     }
 
   }//end of component
