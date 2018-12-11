@@ -19,6 +19,7 @@ export class MarioComponent implements OnInit {
 
   ngOnInit(){
     this.drawStuff(this.unt*8);
+    this.drawStuffSecond();
   }
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent){
@@ -29,6 +30,40 @@ export class MarioComponent implements OnInit {
     }else if(event.key ==='ArrowLeft'){
       this.pos-=this.step;
       this.drawStuff(this.unt*8 + this.pos);
+    }
+  }
+  drawStuffSecond(){
+    var canvas = document.querySelector('#myCanvasSecond') as HTMLCanvasElement; 
+    var width = canvas.width = window.innerWidth - 128;
+    var height = canvas.height = window.innerHeight - 128 - 256;
+    var ctx = canvas.getContext('2d');
+      ctx.translate(width/2, height/2);
+    var image = new Image();
+    image.src = 'assets/walk-right.png';
+    let sprite = 0;
+    let posX = 0;
+    let sWidth = 102;
+    let sHeigh = 148;
+    image.onload = function drawSprite(){
+      ctx.fillStyle = '#555';
+      ctx.fillRect(-width, -height, width*2, height*2);
+      ctx.drawImage(image, (sprite*102), 0, sWidth, sHeigh, 0+posX, -(sHeigh), sWidth, sHeigh);
+      if (posX % 13 === 0) {
+        if (sprite === 5) {
+          sprite = 0;
+        } else {
+          sprite++;
+        }
+        console.log('sprite now is ' + sprite);
+      }
+      if(posX > width/2) {
+        let newStartPos = -((width/2) + 102);
+        posX = Math.ceil(newStartPos / 13) * 13;
+        console.log('rest posX to :: '+posX);
+      } else {
+        posX += 1;
+      }
+      window.requestAnimationFrame(drawSprite);
     }
   }
   degToRad(degrees) {
